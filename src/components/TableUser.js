@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { fetchAllUser } from "../services/userService";
 import ReactPaginate from "react-paginate";
 import ModalAddUser from "./ModalAddUser";
+import ModalEditUser from "./ModalEditUser";
 
 const TableUser = () => {
    const [listUsers, setListUsers] = useState([]);
@@ -13,9 +14,12 @@ const TableUser = () => {
    const [page, setPage] = useState(0);
 
    const [isShowModalAddUser, setIsShowModalAddUser] = useState(false);
+   const [isShowModalEditUser, setIsShowModalEditUser] = useState(false);
+   const [dataUserEdit, setDataUserEdit] = useState({})
    //  console.log('isShowModalAddUser: ',isShowModalAddUser)
    const handleCloseToProps = () => {
-      setIsShowModalAddUser(!isShowModalAddUser);
+      setIsShowModalAddUser(false);
+      setIsShowModalEditUser(false);
    };
 
    useEffect(() => {
@@ -41,9 +45,16 @@ const TableUser = () => {
    };
    // console.log("lis getUser: ", listUsers);
    const handleUpdateTable = (user) => {
-      setListUsers([user,...listUsers])
-      console.log('Checking user: ',user)
+      setListUsers([user, ...listUsers]);
    };
+
+   //Edit
+   const handleClickEditUser = (user) => {
+      setIsShowModalEditUser(true)
+      setDataUserEdit(user)
+      console.log(">>> Checking user: ", user);
+   };
+
    return (
       <>
          <Container>
@@ -64,6 +75,7 @@ const TableUser = () => {
                      <th>Email</th>
                      <th>First Name</th>
                      <th>Last Name</th>
+                     <th>Actions</th>
                   </tr>
                </thead>
                <tbody>
@@ -76,6 +88,21 @@ const TableUser = () => {
                               <td>{item.email}</td>
                               <td>{item.first_name}</td>
                               <td>{item.last_name}</td>
+                              <td>
+                                 <button
+                                    className="btn btn-warning"
+                                    type=""
+                                    onClick={() => handleClickEditUser(item)}
+                                 >
+                                    Edit
+                                 </button>
+                                 <button
+                                    className="btn btn-danger mx-3"
+                                    type=""
+                                 >
+                                    Delete
+                                 </button>
+                              </td>
                            </tr>
                         );
                      })}
@@ -107,6 +134,13 @@ const TableUser = () => {
             isShow={isShowModalAddUser}
             handleClose={handleCloseToProps}
             handleUpdateTable={handleUpdateTable}
+         />
+         <ModalEditUser isShow={isShowModalEditUser}
+         handleClose={handleCloseToProps}
+         dataUserEdit={dataUserEdit}
+
+
+         
          />
       </>
    );
