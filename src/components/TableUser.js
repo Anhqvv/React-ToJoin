@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import { useEffect, useState } from "react";
 import { fetchAllUser } from "../services/userService";
 import ReactPaginate from "react-paginate";
+import ModalAddUser from "./ModalAddUser";
 
 const TableUser = () => {
    const [listUsers, setListUsers] = useState([]);
@@ -11,12 +12,18 @@ const TableUser = () => {
    const [totalPerPages, setTotalPerPages] = useState(0);
    const [page, setPage] = useState(0);
 
+   const [isShowModalAddUser, setIsShowModalAddUser] = useState(false);
+   //  console.log('isShowModalAddUser: ',isShowModalAddUser)
+   const handleCloseToProps = () => {
+      setIsShowModalAddUser(!isShowModalAddUser);
+   };
+
    useEffect(() => {
       //call api
       getUser(page);
    }, [0]);
 
-   console.log("current page", page);
+   // console.log("current page", page);
    const getUser = async (page1) => {
       let res = await fetchAllUser(page1);
       if (res && res.data) {
@@ -26,7 +33,6 @@ const TableUser = () => {
          setTotalPerPages(res.per_pages);
          setPage(res.page);
       }
-      console.log(">>> Checking getUser res", res.page);
    };
 
    const handlePageClick = (event) => {
@@ -34,9 +40,23 @@ const TableUser = () => {
       getUser(event.selected + 1);
    };
    // console.log("lis getUser: ", listUsers);
+   const handleUpdateTable = (user) => {
+      setListUsers([user,...listUsers])
+      console.log('Checking user: ',user)
+   };
    return (
       <>
          <Container>
+            <div className="my-3 list-users">
+               <h3>List Users</h3>
+               <button
+                  className="btn btn-primary"
+                  type=""
+                  onClick={() => setIsShowModalAddUser(true)}
+               >
+                  Add New User
+               </button>
+            </div>
             <Table striped bordered hover>
                <thead>
                   <tr>
@@ -83,6 +103,11 @@ const TableUser = () => {
                activeClassName={"active"}
             />
          </Container>
+         <ModalAddUser
+            isShow={isShowModalAddUser}
+            handleClose={handleCloseToProps}
+            handleUpdateTable={handleUpdateTable}
+         />
       </>
    );
 };
