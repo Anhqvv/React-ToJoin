@@ -1,13 +1,26 @@
-import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { postCreateNewUser } from "../services/userService";
+import { deleteUser } from "../services/userService";
 import { toast } from "react-toastify";
 
 const ModalDeleteUser = (props) => {
-   const { handleClose, isShow, dataUserDelete } = props;
-   const handleClickDeleteConfirm = () => {};
-   console.log("dataUserDelete = ", dataUserDelete);
+   const {
+      handleClose,
+      isShow,
+      dataUserDelete,
+      handleDeleteFromUserFromModal,
+   } = props;
+   const handleClickDeleteConfirm = async () => {
+      let res = await deleteUser(dataUserDelete.id);
+      if (res && res.statusCode === 204) {
+         toast.success("Delete user is succeed");
+         handleDeleteFromUserFromModal(dataUserDelete);
+         handleClose();
+      } else {
+         toast.error("Error delete user");
+      }
+   };
+   // console.log("dataUserDelete = ", dataUserDelete);
    return (
       <>
          <Modal
@@ -22,7 +35,7 @@ const ModalDeleteUser = (props) => {
             </Modal.Header>
             <Modal.Body>
                <div className="modal-add-user">
-                 Do you want to Delete this user?
+                  Do you want to Delete this user?
                   <br />
                   <b>email = {dataUserDelete.email}</b>
                </div>

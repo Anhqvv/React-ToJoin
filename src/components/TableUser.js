@@ -73,7 +73,12 @@ const TableUser = () => {
    const handleClickDeleteUser = (user) => {
       setIsShowModalDeleteUser(true);
       console.log("data user: ", user);
-      setDataUserDelete(user)
+      setDataUserDelete(user);
+   };
+   const handleDeleteFromUserFromModal = (user) => {
+      let cloneListUsers = _.cloneDeep(listUsers);
+      cloneListUsers = listUsers.filter((item) => item.id !== user.id);
+      setListUsers(cloneListUsers);
    };
 
    return (
@@ -167,6 +172,7 @@ const TableUser = () => {
             isShow={isShowModalDeleteUser}
             handleClose={handleCloseToProps}
             dataUserDelete={dataUserDelete}
+            handleDeleteFromUserFromModal={handleDeleteFromUserFromModal}
          />
       </>
    );
