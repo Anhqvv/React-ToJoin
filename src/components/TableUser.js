@@ -5,6 +5,7 @@ import { fetchAllUser } from "../services/userService";
 import ReactPaginate from "react-paginate";
 import ModalAddUser from "./ModalAddUser";
 import ModalEditUser from "./ModalEditUser";
+import _ from "lodash";
 
 const TableUser = () => {
    const [listUsers, setListUsers] = useState([]);
@@ -15,7 +16,7 @@ const TableUser = () => {
 
    const [isShowModalAddUser, setIsShowModalAddUser] = useState(false);
    const [isShowModalEditUser, setIsShowModalEditUser] = useState(false);
-   const [dataUserEdit, setDataUserEdit] = useState({})
+   const [dataUserEdit, setDataUserEdit] = useState({});
    //  console.log('isShowModalAddUser: ',isShowModalAddUser)
    const handleCloseToProps = () => {
       setIsShowModalAddUser(false);
@@ -50,9 +51,19 @@ const TableUser = () => {
 
    //Edit
    const handleClickEditUser = (user) => {
-      setIsShowModalEditUser(true)
-      setDataUserEdit(user)
-      console.log(">>> Checking user: ", user);
+      setIsShowModalEditUser(true);
+      setDataUserEdit(user);
+      // console.log(">>> Checking user: ", user);
+   };
+
+   const handleEditUserFromModal = (user) => {
+      let cloneListUsers = _.cloneDeep(listUsers);
+      let index = listUsers.findIndex((item) => item.id === user.id);
+      cloneListUsers[index].first_name = user.first_name;
+      setListUsers(cloneListUsers)
+      console.log(">>>", listUsers, cloneListUsers);
+      // console.log("index = ", index);
+      // console.log('user',user)
    };
 
    return (
@@ -135,12 +146,11 @@ const TableUser = () => {
             handleClose={handleCloseToProps}
             handleUpdateTable={handleUpdateTable}
          />
-         <ModalEditUser isShow={isShowModalEditUser}
-         handleClose={handleCloseToProps}
-         dataUserEdit={dataUserEdit}
-
-
-         
+         <ModalEditUser
+            isShow={isShowModalEditUser}
+            handleClose={handleCloseToProps}
+            dataUserEdit={dataUserEdit}
+            handleEditUserFromModal={handleEditUserFromModal}
          />
       </>
    );
