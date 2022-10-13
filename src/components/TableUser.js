@@ -85,7 +85,7 @@ const TableUser = () => {
       cloneListUsers = listUsers.filter((item) => item.id !== user.id);
       setListUsers(cloneListUsers);
    };
-
+   //Sort
    const handleSort = (sortBy, sortField) => {
       setSortBy(sortBy);
       setSortField(sortField);
@@ -93,6 +93,19 @@ const TableUser = () => {
       cloneListUsers = _.orderBy(cloneListUsers, sortField, sortBy);
       setListUsers(cloneListUsers);
    };
+   const handleSearch = _.debounce((e) => {
+      let keyWord = e.target.value;
+      if (keyWord) {
+         // console.log("call Api event");
+         let cloneListUsers = _.cloneDeep(listUsers);
+         cloneListUsers = cloneListUsers.filter((item) =>
+            item.email.includes(keyWord)
+         );
+         setListUsers(cloneListUsers);
+      } else {
+         getUser(1);
+      }
+   },500)
 
    return (
       <>
@@ -106,6 +119,15 @@ const TableUser = () => {
                >
                   Add New User
                </button>
+            </div>
+            <div className="col-4 my-3">
+               <input
+                  className="form-control"
+                  placeholder="Search user by email..."
+                  autoFocus
+                  // value={search}
+                  onChange={(e) => handleSearch(e)}
+               />
             </div>
             <Table striped bordered hover>
                <thead>
