@@ -4,7 +4,17 @@
    align-items: center;
    .icon-sort:last-child {
       cursor: pointer;
-      font-size:18px;
-
+      font-size: 18px;
+   }
+}
+.list-users {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   .group-btns {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
    }
 }
