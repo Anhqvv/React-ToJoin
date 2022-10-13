@@ -1,0 +1,10 @@
+.header-sort {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   .icon-sort:last-child {
+      cursor: pointer;
+      font-size:18px;
+
+   }
+}
