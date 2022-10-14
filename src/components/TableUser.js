@@ -9,6 +9,8 @@ import ModalEditUser from "./ModalEditUser";
 import ModalDeleteUser from "./ModalDeleteUser";
 import "./TableUser.scss";
 import { CSVLink } from "react-csv";
+import { toast } from "react-toastify";
+import Papa from "papaparse";
 
 const TableUser = () => {
    const [listUsers, setListUsers] = useState([]);
@@ -26,6 +28,9 @@ const TableUser = () => {
 
    const [sortBy, setSortBy] = useState("asc");
    const [sortField, setSortField] = useState("id");
+
+   //csv
+   const [dataExport, setDataExport] = useState([]);
 
    const handleCloseToProps = () => {
       setIsShowModalAddUser(false);
@@ -108,12 +113,72 @@ const TableUser = () => {
       }
    }, 500);
 
-   const csvData = [
-      ["firstname", "lastname", "email"],
-      ["Ahmed", "Tomi", "ah@smthing.co.com"],
-      ["Raed", "Labes", "rl@smthing.co.com"],
-      ["Yezzi", "Min l3b", "ymin@cocococo.com"],
-   ];
+   // const csvData = [
+   //    ["firstname", "lastname", "email"],
+   //    ["Ahmed", "Tomi", "ah@smthing.co.com"],
+   //    ["Raed", "Labes", "rl@smthing.co.com"],
+   //    ["Yezzi", "Min l3b", "ymin@cocococo.com"],
+   // ];
+   const handleDataExport = (event, done) => {
+      let data = [];
+
+      if (listUsers && listUsers.length > 0) {
+         data.push(["Id", "Email", "First Name", "Last Name"]);
+         listUsers.map((user) => {
+            let arr = [];
+            arr[0] = user.id;
+            arr[1] = user.email;
+            arr[2] = user.first_name;
+            arr[3] = user.last_name;
+            data.push(arr);
+         });
+
+         setDataExport(data);
+         done();
+      }
+   };
+   const handleImportCSV = (e) => {
+      if (e.target && e.target.files[0]) {
+         let file = e.target.files[0];
+         console.log("Checking file: ", file);
+         if (file.type !== "text/csv") {
+            toast.error("Your file is not CSV file , please try again");
+            return;
+         }
+         Papa.parse(file, {
+            complete: function (results) {
+               let dataCSV = results.data;
+               if (dataCSV.length > 1) {
+                  if (dataCSV[0] && dataCSV[0].length === 4) {
+                     if (
+                        dataCSV[0][1] !== "email" ||
+                        dataCSV[0][2] !== "firstName" ||
+                        dataCSV[0][3] !== "lastName"
+                     ) {
+                        toast.error(
+                           "Wrong header format, We need format like this: id,email,fisrtName,lastName"
+                        );
+                        return;
+                     } else {
+                        let result = [];
+                        dataCSV.forEach((item, index) => {
+                           if (index > 0 && item.length === 4) {
+                              let obj = {};
+                              obj.email = item[1];
+                              obj.first_name = item[2];
+                              obj.last_name = item[3];
+                              result.push(obj);
+                           }
+                        });
+                        setListUsers(result);
+                        toast.success("Your CSV file is imported");
+                     }
+                  }
+               }
+            },
+         });
+      }
+   };
 
    return (
       <>
@@ -121,16 +186,25 @@ const TableUser = () => {
             <div className="my-3 list-users">
                <h3>List Users</h3>
                <div className="group-btns">
-                  <label className="btn btn-success" htmlFor="import-btn"><i className="fa-sharp fa-solid fa-file-import"></i> Import</label>
-                  <input type="file" id="import-btn" hidden/>
-      
+                  <label className="btn btn-success" htmlFor="import-btn">
+                     <i className="fa-sharp fa-solid fa-file-import"></i> Import
+                  </label>
+                  <input
+                     type="file"
+                     id="import-btn"
+                     hidden
+                     onChange={(e) => handleImportCSV(e)}
+                  />
+
                   <CSVLink
-                     data={csvData}
+                     data={dataExport}
                      filename={"my-user.csv"}
                      className="btn btn-secondary"
+                     asyncOnClick={true}
+                     onClick={(event, done) => handleDataExport(event, done)}
                   >
                      <i className="fa-solid fa-file-arrow-down"></i> Export
-                  </CSVLink>{" "}
+                  </CSVLink>
                   <button
                      className="btn btn-primary"
                      type=""
@@ -145,7 +219,6 @@ const TableUser = () => {
                   className="form-control"
                   placeholder="Search user by email..."
                   autoFocus
-                  // value={search}
                   onChange={(e) => handleSearch(e)}
                />
             </div>
