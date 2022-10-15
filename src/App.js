@@ -4,7 +4,8 @@ import TableUser from "./components/TableUser";
 import Container from "react-bootstrap/Container";
 import Toastify from "./components/Toastify";
 import HomePage from "./components/HomePage";
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
 
 function App() {
    return (
@@ -15,6 +16,7 @@ function App() {
                <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/users" element={<TableUser />} />
+                  <Route path="/login" element={<Login />} />
                </Routes>
             </Container>
             {/* <TableUser /> */}
