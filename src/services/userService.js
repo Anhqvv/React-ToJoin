@@ -1,20 +1,24 @@
-import axios from "./axios"
-
+import axios from "./axios";
 
 const fetchAllUser = (pageData) => {
-    return  axios.get(`/api/users?page=${pageData}`)
-}
+   return axios.get(`/api/users?page=${pageData}`);
+};
 
 const postCreateNewUser = (name, job) => {
-    return axios.post('/api/users', {name, job})
-}
+   return axios.post("/api/users", { name, job });
+};
 
 const putUpdateUser = (name, job) => {
-    return axios.put('/api/users/2',{name, job})
-}
+   return axios.put("/api/users/2", { name, job });
+};
 
 const deleteUser = (id) => {
-    return axios.delete(`/api/users/${id}`)
-}
+   return axios.delete(`/api/users/${id}`);
+};
 
-export {fetchAllUser, postCreateNewUser, putUpdateUser, deleteUser}
+const loginApi = (email, password) => {
+   console.log("loginApi checking :", email, password);
+   return axios.post("/api/login", { email, password });
+};
+
+export { fetchAllUser, postCreateNewUser, putUpdateUser, deleteUser, loginApi };
